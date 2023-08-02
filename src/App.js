@@ -5,6 +5,7 @@ import LoginForm from "./components/LoginForm";
 import UserInfo from "./components/UserInfo";
 import LogoutButton from "./components/LogoutButton";
 import BlogForm from "./components/BlogForm";
+import Notification from "./components/Notification";
 
 import blogService from "./services/blogs";
 import authService from "./services/auth";
@@ -23,19 +24,25 @@ const App = () => {
     password: "",
   });
   const [user, setUser] = useState(null);
+  const [notification, setNotification] = useState(null);
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    authService
-      .authenticate(credentials)
-      .then((user) => {
-        setUser(user);
-        setCredentials({ username: "", password: "" });
-        window.localStorage.setItem("user", JSON.stringify(user));
-      })
-      .catch((error) => {
-        console.log(error);
+    try {
+      const user = await authService.authenticate(credentials);
+
+      setUser(user);
+      setCredentials({ username: "", password: "" });
+      window.localStorage.setItem("user", JSON.stringify(user));
+    } catch (error) {
+      setNotification({
+        message: error.response.data.error,
+        error: true,
       });
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
   };
 
   const handleLogout = () => {
@@ -53,28 +60,51 @@ const App = () => {
     setBlog({ ...blog, [name]: value });
   };
 
-  const handleBlogPost = (event) => {
+  const handleBlogPost = async (event) => {
     event.preventDefault();
     const token = getToken();
-    blogService
-      .create(blog, token)
-      .then((blog) => {
-        setBlogs([...blogs, blog]);
-        setBlog({
-          title: "",
-          author: "",
-          url: "",
-        });
-      })
-      .catch((error) => console.log(error));
+    try {
+      const newBlog = await blogService.create(blog, token);
+
+      setBlogs([...blogs, newBlog]);
+      setBlog({
+        title: "",
+        author: "",
+        url: "",
+      });
+
+      setNotification({
+        message: `A new blog ${blog.title} by ${blog.author} added`,
+        error: false,
+      });
+
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } catch (error) {
+      setNotification({
+        message: error.response.data.error,
+        error: true,
+      });
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
   };
 
   useEffect(() => {
-    user &&
-      blogService
-        .getAll()
-        .then((blogs) => setBlogs(blogs))
-        .catch((error) => console.log(error));
+    const fetchBlogs = async () => {
+      try {
+        const blogs = await blogService.getAll();
+        setBlogs(blogs);
+      } catch (error) {
+        setNotification({
+          message: error.response.data.error,
+          error: true,
+        });
+      }
+    };
+    user && fetchBlogs();
   }, [user]);
 
   useEffect(() => {
@@ -88,6 +118,7 @@ const App = () => {
         <>
           <UserInfo user={user} />
           <LogoutButton onClick={handleLogout} />
+          <Notification notification={notification} />
           <BlogForm
             blog={blog}
             onChange={handleBlogChange}
@@ -96,11 +127,14 @@ const App = () => {
           <Blog blogs={blogs} />
         </>
       ) : (
-        <LoginForm
-          credentials={credentials}
-          onSubmit={handleLogin}
-          onChange={handleCredentialsChange}
-        />
+        <>
+          <Notification notification={notification} />
+          <LoginForm
+            credentials={credentials}
+            onSubmit={handleLogin}
+            onChange={handleCredentialsChange}
+          />
+        </>
       )}
     </div>
   );
