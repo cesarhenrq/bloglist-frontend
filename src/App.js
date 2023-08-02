@@ -6,6 +6,7 @@ import UserInfo from "./components/UserInfo";
 
 import blogService from "./services/blogs";
 import authService from "./services/auth";
+import LogoutButton from "./components/LogoutButton";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -19,10 +20,19 @@ const App = () => {
     event.preventDefault();
     authService
       .authenticate(credentials)
-      .then((user) => setUser(user))
+      .then((user) => {
+        setUser(user);
+        setCredentials({ username: "", password: "" });
+        window.localStorage.setItem("user", JSON.stringify(user));
+      })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    window.localStorage.removeItem("user");
   };
 
   const handleCredentialsChange = (event) => {
@@ -38,11 +48,17 @@ const App = () => {
         .catch((error) => console.log(error));
   }, [user]);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("user");
+    loggedUserJSON && setUser(JSON.parse(loggedUserJSON));
+  }, []);
+
   return (
     <div>
       {user ? (
         <>
           <UserInfo user={user} />
+          <LogoutButton onClick={handleLogout} />
           <Blog blogs={blogs} />
         </>
       ) : (
