@@ -65,6 +65,7 @@ const App = () => {
           user: {
             username: user.username,
             name: user.name,
+            id: newBlog.user,
           },
         },
       ]);
@@ -77,6 +78,36 @@ const App = () => {
       setTimeout(() => {
         setNotification(null);
       }, 5000);
+    } catch (error) {
+      setNotification({
+        message: error.response.data.error,
+        error: true,
+      });
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
+  };
+
+  const handleBlogLike = async (blog) => {
+    const token = getToken();
+    try {
+      const updatedBlog = await blogService.update(blog, token);
+
+      setBlogs(
+        blogs.map((blog) =>
+          blog.id === updatedBlog.id
+            ? {
+                ...updatedBlog,
+                user: {
+                  username: blog.user.username,
+                  name: blog.user.name,
+                  id: updatedBlog.user,
+                },
+              }
+            : blog
+        )
+      );
     } catch (error) {
       setNotification({
         message: error.response.data.error,
@@ -120,7 +151,7 @@ const App = () => {
           </Togglable>
           <h2>blogs</h2>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} onClick={handleBlogLike} />
           ))}
         </>
       ) : (
