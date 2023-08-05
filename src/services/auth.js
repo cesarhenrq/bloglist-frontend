@@ -1,5 +1,5 @@
-import axios from "axios";
-const baseUrl = "/api/login";
+import axios from 'axios';
+const baseUrl = '/api/login';
 
 const authenticate = async (credentials) => {
   const user = await axios.post(`${baseUrl}`, credentials);
@@ -7,5 +7,6 @@ const authenticate = async (credentials) => {
   return user.data;
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { authenticate };
+const authService = { authenticate };
+
+export default authService;

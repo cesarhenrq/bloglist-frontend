@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 
-import Blog from "./components/Blog";
-import LoginForm from "./components/LoginForm";
-import UserInfo from "./components/UserInfo";
-import LogoutButton from "./components/LogoutButton";
-import BlogForm from "./components/BlogForm";
-import Notification from "./components/Notification";
-import Togglable from "./components/Togglable";
+import Blog from './components/Blog';
+import LoginForm from './components/LoginForm';
+import UserInfo from './components/UserInfo';
+import LogoutButton from './components/LogoutButton';
+import BlogForm from './components/BlogForm';
+import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 
-import blogService from "./services/blogs";
-import authService from "./services/auth";
+import blogService from './services/blogs';
+import authService from './services/auth';
 
-import getToken from "./utils/getToken";
+import getToken from './utils/getToken';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [credentials, setCredentials] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
@@ -29,8 +29,8 @@ const App = () => {
       const user = await authService.authenticate(credentials);
 
       setUser(user);
-      setCredentials({ username: "", password: "" });
-      window.localStorage.setItem("user", JSON.stringify(user));
+      setCredentials({ username: '', password: '' });
+      window.localStorage.setItem('user', JSON.stringify(user));
     } catch (error) {
       setNotification({
         message: error.response.data.error,
@@ -44,7 +44,7 @@ const App = () => {
 
   const handleLogout = () => {
     setUser(null);
-    window.localStorage.removeItem("user");
+    window.localStorage.removeItem('user');
   };
 
   const handleCredentialsChange = (event) => {
@@ -102,16 +102,16 @@ const App = () => {
           .map((blog) =>
             blog.id === updatedBlog.id
               ? {
-                  ...updatedBlog,
-                  user: {
-                    username: blog.user.username,
-                    name: blog.user.name,
-                    id: updatedBlog.user,
-                  },
-                }
-              : blog
+                ...updatedBlog,
+                user: {
+                  username: blog.user.username,
+                  name: blog.user.name,
+                  id: updatedBlog.user,
+                },
+              }
+              : blog,
           )
-          .sort((a, b) => b.likes - a.likes)
+          .sort((a, b) => b.likes - a.likes),
       );
     } catch (error) {
       if (error.response.status === 401) {
@@ -168,7 +168,7 @@ const App = () => {
   }, [user]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("user");
+    const loggedUserJSON = window.localStorage.getItem('user');
     loggedUserJSON && setUser(JSON.parse(loggedUserJSON));
   }, []);
 
@@ -179,7 +179,7 @@ const App = () => {
           <UserInfo user={user} />
           <LogoutButton onClick={handleLogout} />
           <Notification notification={notification} />
-          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <BlogForm handleBlogPost={handleBlogPost} />
           </Togglable>
           <h2>blogs</h2>

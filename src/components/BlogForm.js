@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 const BlogForm = ({ handleBlogPost }) => {
   const [blog, setBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
+    title: '',
+    author: '',
+    url: '',
   });
 
   const handleBlogChange = (event) => {
@@ -16,9 +17,9 @@ const BlogForm = ({ handleBlogPost }) => {
     event.preventDefault();
     handleBlogPost(blog);
     setBlog({
-      title: "",
-      author: "",
-      url: "",
+      title: '',
+      author: '',
+      url: '',
     });
   };
 
@@ -29,8 +30,8 @@ const BlogForm = ({ handleBlogPost }) => {
         <div>
           Title:
           <input
-            type='text'
-            name='title'
+            type="text"
+            name="title"
             value={blog.title}
             onChange={handleBlogChange}
           />
@@ -38,8 +39,8 @@ const BlogForm = ({ handleBlogPost }) => {
         <div>
           author:
           <input
-            type='text'
-            name='author'
+            type="text"
+            name="author"
             value={blog.author}
             onChange={handleBlogChange}
           />
@@ -47,16 +48,20 @@ const BlogForm = ({ handleBlogPost }) => {
         <div>
           url:
           <input
-            type='text'
-            name='url'
+            type="text"
+            name="url"
             value={blog.url}
             onChange={handleBlogChange}
           />
         </div>
-        <button type='submit'>create</button>
+        <button type="submit">create</button>
       </form>
     </div>
   );
+};
+
+BlogForm.propTypes = {
+  handleBlogPost: PropTypes.func.isRequired,
 };
 
 export default BlogForm;
