@@ -79,6 +79,9 @@ const App = () => {
         setNotification(null);
       }, 5000);
     } catch (error) {
+      if (error.response.status === 401) {
+        handleLogout();
+      }
       setNotification({
         message: error.response.data.error,
         error: true,
@@ -111,6 +114,33 @@ const App = () => {
           .sort((a, b) => b.likes - a.likes)
       );
     } catch (error) {
+      if (error.response.status === 401) {
+        handleLogout();
+      } else if (error.response.status === 404) {
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
+      }
+
+      setNotification({
+        message: error.response.data.error,
+        error: true,
+      });
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    }
+  };
+
+  const handleBlogDelete = async (blog) => {
+    const token = getToken();
+    try {
+      await blogService.remove(blog, token);
+      setBlogs(blogs.filter((b) => b.id !== blog.id));
+    } catch (error) {
+      if (error.response.status === 401) {
+        handleLogout();
+      } else if (error.response.status === 404) {
+        setBlogs(blogs.filter((b) => b.id !== blog.id));
+      }
       setNotification({
         message: error.response.data.error,
         error: true,
@@ -154,7 +184,12 @@ const App = () => {
           </Togglable>
           <h2>blogs</h2>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} onClick={handleBlogLike} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              onLike={handleBlogLike}
+              onDelete={handleBlogDelete}
+            />
           ))}
         </>
       ) : (

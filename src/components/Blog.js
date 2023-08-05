@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog, onClick }) => {
+const Blog = ({ blog, onLike, onDelete }) => {
   const [visible, setVisible] = useState(false);
 
   const handleVisibility = () => {
@@ -12,12 +12,19 @@ const Blog = ({ blog, onClick }) => {
   const blogInfoVisibility = { display: visible ? "" : "none" };
 
   const handleBlogLike = () => {
-    onClick({
+    onLike({
       ...blog,
       likes: blog.likes + 1,
       user: blog.user.id,
       _id: blog.id,
     });
+  };
+
+  const handleBlogDelete = () => {
+    const shouldDelete = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}?`
+    );
+    shouldDelete && onDelete(blog);
   };
 
   return (
@@ -30,6 +37,7 @@ const Blog = ({ blog, onClick }) => {
           likes {blog.likes} <button onClick={handleBlogLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
+        <button onClick={handleBlogDelete}>remove</button>
       </div>
     </div>
   );
