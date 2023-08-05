@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import Blog from "./components/Blog";
 import LoginForm from "./components/LoginForm";
@@ -6,6 +6,7 @@ import UserInfo from "./components/UserInfo";
 import LogoutButton from "./components/LogoutButton";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
+import Togglable from "./components/Togglable";
 
 import blogService from "./services/blogs";
 import authService from "./services/auth";
@@ -14,17 +15,13 @@ import getToken from "./utils/getToken";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [blog, setBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-  });
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
+  const blogFormRef = useRef(null);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -55,23 +52,13 @@ const App = () => {
     setCredentials({ ...credentials, [name]: value });
   };
 
-  const handleBlogChange = (event) => {
-    const { name, value } = event.target;
-    setBlog({ ...blog, [name]: value });
-  };
-
-  const handleBlogPost = async (event) => {
-    event.preventDefault();
+  const handleBlogPost = async (blog) => {
     const token = getToken();
     try {
+      blogFormRef.current.toggleVisibility();
       const newBlog = await blogService.create(blog, token);
 
       setBlogs([...blogs, newBlog]);
-      setBlog({
-        title: "",
-        author: "",
-        url: "",
-      });
 
       setNotification({
         message: `A new blog ${blog.title} by ${blog.author} added`,
@@ -119,11 +106,9 @@ const App = () => {
           <UserInfo user={user} />
           <LogoutButton onClick={handleLogout} />
           <Notification notification={notification} />
-          <BlogForm
-            blog={blog}
-            onChange={handleBlogChange}
-            onSubmit={handleBlogPost}
-          />
+          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <BlogForm handleBlogPost={handleBlogPost} />
+          </Togglable>
           <Blog blogs={blogs} />
         </>
       ) : (
