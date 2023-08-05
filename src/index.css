@@ -17,3 +17,11 @@ div.success {
   color: green;
   border-color: green;
 }
+
+div.blog-post {
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px 5px;
+  margin-bottom: 10px;
+  border-width: 1px;
+}
