@@ -58,7 +58,16 @@ const App = () => {
       blogFormRef.current.toggleVisibility();
       const newBlog = await blogService.create(blog, token);
 
-      setBlogs([...blogs, newBlog]);
+      setBlogs([
+        ...blogs,
+        {
+          ...newBlog,
+          user: {
+            username: user.username,
+            name: user.name,
+          },
+        },
+      ]);
 
       setNotification({
         message: `A new blog ${blog.title} by ${blog.author} added`,
