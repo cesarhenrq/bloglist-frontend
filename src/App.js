@@ -95,18 +95,20 @@ const App = () => {
       const updatedBlog = await blogService.update(blog, token);
 
       setBlogs(
-        blogs.map((blog) =>
-          blog.id === updatedBlog.id
-            ? {
-                ...updatedBlog,
-                user: {
-                  username: blog.user.username,
-                  name: blog.user.name,
-                  id: updatedBlog.user,
-                },
-              }
-            : blog
-        )
+        blogs
+          .map((blog) =>
+            blog.id === updatedBlog.id
+              ? {
+                  ...updatedBlog,
+                  user: {
+                    username: blog.user.username,
+                    name: blog.user.name,
+                    id: updatedBlog.user,
+                  },
+                }
+              : blog
+          )
+          .sort((a, b) => b.likes - a.likes)
       );
     } catch (error) {
       setNotification({
@@ -123,6 +125,7 @@ const App = () => {
     const fetchBlogs = async () => {
       try {
         const blogs = await blogService.getAll();
+        blogs.sort((a, b) => b.likes - a.likes);
         setBlogs(blogs);
       } catch (error) {
         setNotification({
