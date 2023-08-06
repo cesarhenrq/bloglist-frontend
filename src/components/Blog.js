@@ -32,7 +32,7 @@ const Blog = ({ blog, onLike, onDelete }) => {
     <div className="blog-post">
       {blog.title} {blog.author}{' '}
       <button onClick={handleVisibility}>{buttonLabel}</button>
-      <div style={blogInfoVisibility}>
+      <div style={blogInfoVisibility} className="blog-post-info">
         <div>{blog.url}</div>
         <div>
           likes {blog.likes} <button onClick={handleBlogLike}>like</button>
