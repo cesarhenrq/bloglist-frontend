@@ -44,4 +44,13 @@ describe('<Blog />', () => {
     const visibleElement = screen.getByText('Test url');
     expect(visibleElement).toBeDefined();
   });
+
+  test('calls event handler twice when like button is clicked twice', async () => {
+    const user = userEvent.setup();
+    const button = screen.getByText('like');
+    await user.click(button);
+    await user.click(button);
+
+    expect(mockOnLike.mock.calls).toHaveLength(2);
+  });
 });
