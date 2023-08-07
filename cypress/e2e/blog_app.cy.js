@@ -69,14 +69,20 @@ describe('Blog app', function () {
           url: 'test url',
         };
         cy.createBlog(blog);
-        cy.createBlog(blog);
       });
 
-      it.only('it can be liked', function () {
+      it('it can be liked', function () {
         cy.contains('test title test author').parent().as('blog');
         cy.get('@blog').contains('view').click();
         cy.get('@blog').contains('like').click();
         cy.get('@blog').contains('1');
+      });
+
+      it('it can be deleted by the user who created it', function () {
+        cy.contains('test title test author').parent().as('blog');
+        cy.get('@blog').contains('view').click();
+        cy.get('@blog').contains('remove').click();
+        cy.get('html').should('not.contain', 'test title test author');
       });
     });
   });
