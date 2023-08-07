@@ -60,5 +60,24 @@ describe('Blog app', function () {
 
       cy.contains('test title test author');
     });
+
+    describe('and a blog exists', function () {
+      beforeEach(function () {
+        const blog = {
+          title: 'test title',
+          author: 'test author',
+          url: 'test url',
+        };
+        cy.createBlog(blog);
+        cy.createBlog(blog);
+      });
+
+      it.only('it can be liked', function () {
+        cy.contains('test title test author').parent().as('blog');
+        cy.get('@blog').contains('view').click();
+        cy.get('@blog').contains('like').click();
+        cy.get('@blog').contains('1');
+      });
+    });
   });
 });
