@@ -39,4 +39,26 @@ describe('Blog app', function () {
         .and('have.css', 'color', 'rgb(255, 0, 0)');
     });
   });
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login('test', 'test');
+    });
+
+    it('A blog can be created', function () {
+      cy.contains('new blog').click();
+
+      cy.get('#title').type('test title');
+      cy.get('#author').type('test author');
+      cy.get('#url').type('test url');
+      cy.get('#create-blog-button').click();
+
+      cy.get('.success')
+        .should('be.visible')
+        .and('contain', 'A new blog test title by test author added')
+        .and('have.css', 'color', 'rgb(0, 128, 0)');
+
+      cy.contains('test title test author');
+    });
+  });
 });
