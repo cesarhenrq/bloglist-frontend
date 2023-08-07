@@ -84,6 +84,19 @@ describe('Blog app', function () {
         cy.get('@blog').contains('remove').click();
         cy.get('html').should('not.contain', 'test title test author');
       });
+
+      it('it cannot be deleted by another user', function () {
+        cy.createUser({
+          username: 'another',
+          name: 'another',
+          password: 'another',
+        });
+        cy.login('another', 'another');
+
+        cy.contains('test title test author').parent().as('blog');
+        cy.get('@blog').contains('view').click();
+        cy.get('@blog').should('not.contain', 'remove');
+      });
     });
   });
 });

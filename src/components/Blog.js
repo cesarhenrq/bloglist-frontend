@@ -28,6 +28,13 @@ const Blog = ({ blog, onLike, onDelete }) => {
     shouldDelete && onDelete(blog);
   };
 
+  const isBlogCreatedByLoggedInUser = () => {
+    const loggedInUserId = JSON.parse(
+      window.localStorage.getItem('user'),
+    ).username;
+    return blog.user.username === loggedInUserId;
+  };
+
   return (
     <div className="blog-post">
       {blog.title} {blog.author}{' '}
@@ -38,7 +45,9 @@ const Blog = ({ blog, onLike, onDelete }) => {
           likes {blog.likes} <button onClick={handleBlogLike}>like</button>
         </div>
         <div>{blog.user.name}</div>
-        <button onClick={handleBlogDelete}>remove</button>
+        {isBlogCreatedByLoggedInUser() && (
+          <button onClick={handleBlogDelete}>remove</button>
+        )}
       </div>
     </div>
   );
