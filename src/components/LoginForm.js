@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 const LoginForm = ({ credentials, onSubmit, onChange }) => {
   return (
-    <div>
+    <div className="login-form-container">
       <h2>Login to application</h2>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={onSubmit} className="login-form">
         <div>
           username
           <input
