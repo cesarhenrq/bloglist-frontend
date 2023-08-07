@@ -97,6 +97,30 @@ describe('Blog app', function () {
         cy.get('@blog').contains('view').click();
         cy.get('@blog').should('not.contain', 'remove');
       });
+
+      it('blogs are ordered according to likes', function () {
+        cy.createBlog({
+          title: 'test title 2',
+          author: 'test author 2',
+          url: 'test url 2',
+        });
+
+        cy.get('.blog-post').eq(0).contains('view').click();
+        cy.get('.blog-post').eq(1).contains('view').click();
+
+        cy.get('.blog-post').eq(0).contains('like').click();
+        cy.get('.blog-post').eq(0).contains('1');
+
+        cy.get('.blog-post').eq(1).contains('like').click();
+        cy.get('.blog-post').eq(1).contains('1');
+        cy.get('.blog-post').eq(1).contains('like').click();
+        cy.get('.blog-post').eq(1).contains('2');
+
+        cy.get('.blog-post')
+          .eq(0)
+          .should('contain', 'test title 2 test author 2');
+        cy.get('.blog-post').eq(1).should('contain', 'test title test author');
+      });
     });
   });
 });
