@@ -20,3 +20,8 @@ Cypress.Commands.add('createBlog', (blog) => {
 
   cy.visit('http://localhost:3000');
 });
+
+Cypress.Commands.add('createUser', (user) => {
+  cy.request('POST', 'http://localhost:3003/api/users', user);
+  cy.visit('http://localhost:3000');
+});

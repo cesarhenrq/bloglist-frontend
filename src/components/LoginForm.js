@@ -12,6 +12,7 @@ const LoginForm = ({ credentials, onSubmit, onChange }) => {
             type="text"
             value={credentials.username}
             name="username"
+            id="username"
             onChange={onChange}
           />
         </div>
@@ -21,10 +22,13 @@ const LoginForm = ({ credentials, onSubmit, onChange }) => {
             type="password"
             value={credentials.password}
             name="password"
+            id="password"
             onChange={onChange}
           />
         </div>
-        <button type="submit">login</button>
+        <button type="submit" id="login-button">
+          login
+        </button>
       </form>
     </div>
   );
